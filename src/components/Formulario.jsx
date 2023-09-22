@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import Error from "./error";
 
-const Formulario = ({pacientes,setPacientes,paciente}) => {
+const Formulario = ({pacientes,setPacientes,paciente,setPaciente}) => {
 
   const[nombre,setNombre]=useState('');
   const[propietario,setPropietario]=useState('');
@@ -17,7 +17,13 @@ const generarId= ()=>{
 }
 
 useEffect(() => {
-
+  if(Object.keys(paciente).length>0){
+    setNombre(paciente.nombre);
+    setPropietario(paciente.propietario);
+    setEmail(paciente.email);
+    setAlta(paciente.alta);
+    setSintomas(paciente.sintomas);
+  }
            
 }, [paciente])
 
@@ -43,14 +49,29 @@ useEffect(()=>{
       email,
       alta,
       sintomas,
-      id: generarId()
+      
     }
-     setPacientes([...pacientes, objetoPaciente])
-     setNombre('')
-     setPropietario('')
-     setEmail('')
-     setAlta('')
-     setSintomas('')
+
+    if(paciente.id){
+      objetoPaciente.id=paciente.id;
+     
+      const pacientesActualizados= pacientes.map(pacienteState => pacienteState.id ===
+         paciente.id ? objetoPaciente : pacienteState)
+
+         setPacientes(pacientesActualizados)
+         setPaciente({})
+             
+    }else{
+      objetoPaciente.id= generarId()
+      setPacientes([...pacientes, objetoPaciente])
+      
+    }
+     
+      setNombre('')
+      setPropietario('')
+      setEmail('')
+      setAlta('')
+      setSintomas('')
   }
   
 
@@ -132,7 +153,7 @@ useEffect(()=>{
           <input
           type="submit"
           className="bg-indigo-600 w-full p-3 text-white uppercase font-bold rounded-lg hover:bg-indigo-700 cursor-pointer transition-all"
-          value="Agregar Paciente"
+          value={paciente.id ? 'Editar paciente':'Agregar paciente'} 
 
           />
 
